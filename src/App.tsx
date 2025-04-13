@@ -51,6 +51,8 @@ const App: React.FC = () => {
   const [examQuestions, setExamQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [examScore, setExamScore] = useState(0);
+  const [examTimeLeft, setExamTimeLeft] = useState(0); // 考试剩余时间（秒）
+  const [examTimerActive, setExamTimerActive] = useState(false); // 考试计时器是否激活
 
   // 生成新题目的函数
   const generateNewQuestion = (currentDifficulty: DifficultyLevel = difficultyLevel) => {
@@ -154,6 +156,8 @@ const App: React.FC = () => {
       setScore(0);
       setStreak(0);
       generateNewQuestion();
+      // 停止考试计时器
+      setExamTimerActive(false);
     } else if (gameMode === GameMode.EXAM) {
       // 考试模式初始化
       setCurrentQuestionIndex(0);
@@ -170,10 +174,54 @@ const App: React.FC = () => {
         setHidden(currentQ.hidden);
         setUserAnswer('');
         setFeedback('');
+
+        // 设置考试时间（每题30秒）
+        setExamTimeLeft(newQuestions.length * 30);
+        setExamTimerActive(true);
       }
+    } else {
+      // 其他模式停止计时器
+      setExamTimerActive(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameMode]);
+
+  // 考试计时器
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (examTimerActive && examTimeLeft > 0) {
+      timer = setInterval(() => {
+        setExamTimeLeft(prevTime => {
+          const newTime = prevTime - 1;
+          if (newTime <= 0) {
+            // 时间用完了，自动交卷
+            handleSubmitExam();
+            return 0;
+          }
+          return newTime;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [examTimerActive, examTimeLeft]);
+
+  // 格式化时间
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
+  // 提前交卷
+  const handleSubmitExam = () => {
+    setExamTimerActive(false);
+    setGameMode(GameMode.EXAM_RESULT);
+  };
 
   // 计算正确答案
   const getCorrectAnswer = (a: number, b: number, op: string): number => {
@@ -318,6 +366,7 @@ const App: React.FC = () => {
       setFeedback('');
     } else {
       // 所有题目已答完，显示结果
+      setExamTimerActive(false); // 停止计时器
       setGameMode(GameMode.EXAM_RESULT);
     }
   };
@@ -401,7 +450,7 @@ const App: React.FC = () => {
         <h1>小学生算术游戏</h1>
         <div className="menu-buttons">
           <button className="menu-button" onClick={startPracticeMode}>练习模式</button>
-          <button className="menu-button" onClick={() => setGameMode(GameMode.EXAM)}>考试模式</button>
+          <button className="menu-button" onClick={handleExamButtonClick}>考试模式</button>
         </div>
       </div>
     );
@@ -530,14 +579,23 @@ const App: React.FC = () => {
       <div>
         <header className="game-header">
           <h1>小学生算术游戏 - 考试模式</h1>
-          <div className="exam-progress">
-            <span>题目: {currentQuestionIndex + 1} / {examQuestions.length}</span>
-            <div className="progress-bar">
-              <div
-                className="progress"
-                style={{width: `${((currentQuestionIndex + 1) / examQuestions.length) * 100}%`}}
-              ></div>
+          <div className="exam-info">
+            <div className="exam-progress">
+              <span>题目: {currentQuestionIndex + 1} / {examQuestions.length}</span>
+              <div className="progress-bar">
+                <div
+                  className="progress"
+                  style={{width: `${((currentQuestionIndex + 1) / examQuestions.length) * 100}%`}}
+                ></div>
+              </div>
             </div>
+            <div className="exam-timer">
+              <span>剩余时间: {formatTime(examTimeLeft)}</span>
+            </div>
+          </div>
+          <div className="exam-controls">
+            <button className="back-button small" onClick={backToMenu}>退出考试</button>
+            <button className="submit-exam-button" onClick={handleSubmitExam}>提前交卷</button>
           </div>
         </header>
 
@@ -676,6 +734,13 @@ const App: React.FC = () => {
       default:
         return renderMenu();
     }
+  };
+
+  // 点击考试模式按钮
+  const handleExamButtonClick = () => {
+    // 清空考试题目，这样会显示设置界面
+    setExamQuestions([]);
+    setGameMode(GameMode.EXAM);
   };
 
   return (

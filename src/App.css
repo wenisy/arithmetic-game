@@ -454,19 +454,63 @@
   background-color: #388e3c;
 }
 
-/* 考试进度样式 */
+/* 考试信息样式 */
+.exam-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  width: 100%;
+}
+
 .exam-progress {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-top: 10px;
+  flex: 1;
+  margin-right: 20px;
 }
 
 .exam-progress span {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: var(--secondary-color);
   margin-bottom: 5px;
+}
+
+.exam-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.exam-timer span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 5px;
+}
+
+.exam-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.submit-exam-button {
+  padding: 8px 15px;
+  font-size: 1rem;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: inherit;
+}
+
+.submit-exam-button:hover {
+  background-color: #e68a00;
 }
 
 /* 考试结果样式 */
