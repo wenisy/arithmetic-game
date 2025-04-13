@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
+
+// 导入音效
+import correctSound from '../sounds/correct.mp3';
+import wrongSound from '../sounds/wrong.mp3';
 
 // 游戏模式枚举
 enum GameMode {
@@ -27,6 +31,25 @@ interface Question {
 }
 
 const App: React.FC = () => {
+  // 音效引用
+  const correctAudioRef = useRef<HTMLAudioElement | null>(null);
+  const wrongAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // 播放正确答案音效
+  const playCorrectSound = () => {
+    if (correctAudioRef.current) {
+      correctAudioRef.current.currentTime = 0;
+      correctAudioRef.current.play();
+    }
+  };
+
+  // 播放错误答案音效
+  const playWrongSound = () => {
+    if (wrongAudioRef.current) {
+      wrongAudioRef.current.currentTime = 0;
+      wrongAudioRef.current.play();
+    }
+  };
   // 游戏状态
   const [gameMode, setGameMode] = useState<GameMode>(GameMode.MENU);
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(DifficultyLevel.BEGINNER);
@@ -153,11 +176,8 @@ const App: React.FC = () => {
 
   // 当游戏模式改变时初始化
   useEffect(() => {
-    if (gameMode === GameMode.PRACTICE) {
-      // 练习模式初始化
-      setLevel(1);
-      setScore(0);
-      setStreak(0);
+    if (gameMode === GameMode.PRACTICE && level > 0) {
+      // 练习模式初始化（只有当level>0时才初始化，表示用户已经选择了难度并开始练习）
       generateNewQuestion();
       // 停止考试计时器
       setExamTimerActive(false);
@@ -248,6 +268,7 @@ const App: React.FC = () => {
 
     setFeedback(`正确答案是: ${answer}`);
     setFeedbackClass('info');
+    playWrongSound(); // 播放错误音效，因为显示答案计为错误
 
     // 计为错误并生成新题目
     if (gameMode === GameMode.PRACTICE) {
@@ -310,6 +331,7 @@ const App: React.FC = () => {
         setStreak(streak + 1);
         setFeedback('答对了！真棒！');
         setFeedbackClass('success');
+        playCorrectSound(); // 播放正确音效
 
         // 每答对5题升一级
         if (streak % 5 === 4) {
@@ -327,6 +349,7 @@ const App: React.FC = () => {
         setStreak(0);
         setFeedback('再试一次！');
         setFeedbackClass('error');
+        playWrongSound(); // 播放错误音效
       }
     } else if (gameMode === GameMode.EXAM) {
       // 考试模式下的处理
@@ -338,9 +361,11 @@ const App: React.FC = () => {
         setExamScore(examScore + 1);
         setFeedback('答对了！');
         setFeedbackClass('success');
+        playCorrectSound(); // 播放正确音效
       } else {
         setFeedback('答错了！');
         setFeedbackClass('error');
+        playWrongSound(); // 播放错误音效
       }
 
       setExamQuestions(updatedQuestions);
@@ -812,6 +837,10 @@ const App: React.FC = () => {
       <footer className="game-footer">
         <p>小朋友加油！学好数学很重要哦！</p>
       </footer>
+
+      {/* 音效元素 */}
+      <audio ref={correctAudioRef} src={correctSound} preload="auto" />
+      <audio ref={wrongAudioRef} src={wrongSound} preload="auto" />
     </div>
   );
 };
