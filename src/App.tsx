@@ -181,28 +181,7 @@ const App: React.FC = () => {
       generateNewQuestion();
       // 停止考试计时器
       setExamTimerActive(false);
-    } else if (gameMode === GameMode.EXAM) {
-      // 考试模式初始化
-      setCurrentQuestionIndex(0);
-      setExamScore(0);
-      const newQuestions = generateExamQuestions(examQuestionCount, difficultyLevel);
-      setExamQuestions(newQuestions);
-
-      // 设置当前题目
-      if (newQuestions.length > 0) {
-        const currentQ = newQuestions[0];
-        setA(currentQ.a);
-        setB(currentQ.b);
-        setOperator(currentQ.operator);
-        setHidden(currentQ.hidden);
-        setUserAnswer('');
-        setFeedback('');
-
-        // 设置考试时间（每题30秒）
-        setExamTimeLeft(newQuestions.length * 30);
-        setExamTimerActive(true);
-      }
-    } else {
+    } else if (gameMode !== GameMode.EXAM) {
       // 其他模式停止计时器
       setExamTimerActive(false);
     }
@@ -465,7 +444,26 @@ const App: React.FC = () => {
 
   // 开始考试模式
   const startExamMode = () => {
-    setGameMode(GameMode.EXAM);
+    // 生成考试题目
+    setCurrentQuestionIndex(0);
+    setExamScore(0);
+    const newQuestions = generateExamQuestions(examQuestionCount, difficultyLevel);
+    setExamQuestions(newQuestions);
+
+    // 设置当前题目
+    if (newQuestions.length > 0) {
+      const currentQ = newQuestions[0];
+      setA(currentQ.a);
+      setB(currentQ.b);
+      setOperator(currentQ.operator);
+      setHidden(currentQ.hidden);
+      setUserAnswer('');
+      setFeedback('');
+
+      // 设置考试时间（每题30秒）
+      setExamTimeLeft(newQuestions.length * 30);
+      setExamTimerActive(true);
+    }
   };
 
   // 返回主菜单
