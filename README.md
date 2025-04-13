@@ -1,14 +1,28 @@
-# Getting Started with Create React App
+# 小学生算术游戏
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+一个帮助小学生练习加减法的互动游戏，支持练习模式和考试模式。
 
-## Available Scripts
+## 功能特点
 
-In the project directory, you can run:
+- **练习模式**：随机生成加减法题目，难度随关卡提升
+- **考试模式**：可选择难度级别和题目数量
+- **多种题型**：随机隐藏算式中的一个数字（A、运算符或结果）
+- **显示答案**：提供显示答案按钮（计为错误）
+- **成绩统计**：考试结束后显示详细成绩报告
+
+## 技术栈
+
+- React
+- TypeScript
+- CSS3
+
+## 开始使用
+
+在项目目录中，你可以运行：
 
 ### `npm start`
 
-Runs the app in the development mode.\
+在开发模式下运行应用程序。\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
