@@ -1,5 +1,5 @@
 import React from 'react';
-import { GameMode } from './types';
+import { GameMode } from '../types/types';
 
 interface MenuProps {
   setGameMode: (mode: GameMode) => void;

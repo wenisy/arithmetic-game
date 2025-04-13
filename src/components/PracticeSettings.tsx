@@ -1,5 +1,5 @@
 import React from 'react';
-import { DifficultyLevel } from './types';
+import { DifficultyLevel } from '../types/types';
 
 interface PracticeSettingsProps {
   practiceDifficulty: DifficultyLevel;

@@ -1,4 +1,4 @@
-import { DifficultyLevel, Question } from './types';
+import { DifficultyLevel, Question } from '../types/types';
 
 export const generateNewQuestion = (currentDifficulty: DifficultyLevel, level: number = 1, gameMode: string = 'practice'): Question => {
   // 根据难度和关卡调整数字范围

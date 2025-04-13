@@ -1,5 +1,5 @@
 import React from 'react';
-import { Question } from './types';
+import { Question } from '../types/types';
 
 interface ExamModeProps {
   a: number;

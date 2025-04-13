@@ -1,6 +1,6 @@
 import React from 'react';
-import { Question } from './types';
-import { getCorrectAnswer } from './GameLogic';
+import { Question } from '../types/types';
+import { getCorrectAnswer } from '../utils/GameLogic';
 
 interface ExamResultProps {
   examQuestions: Question[];

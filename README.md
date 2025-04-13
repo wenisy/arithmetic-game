@@ -16,6 +16,24 @@
 - TypeScript
 - CSS3
 
+## 项目结构
+
+```
+src/
+├── assets/         # 静态资源
+│   └── sounds/     # 音效文件
+├── components/     # UI 组件
+├── contexts/       # React 上下文
+├── hooks/          # 自定义 hooks
+├── tests/          # 测试文件
+├── types/          # 类型定义
+├── utils/          # 工具函数
+├── App.tsx         # 应用程序主组件
+├── App.css         # 应用程序样式
+├── index.tsx       # 应用程序入口
+└── index.css       # 全局样式
+```
+
 ## 开始使用
 
 在项目目录中，你可以运行：

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { GameMode, DifficultyLevel, Question } from './types';
+import { GameMode, DifficultyLevel, Question } from '../types/types';
 import { generateNewQuestion, generateExamQuestions } from './GameLogic';
 
 export const useGameState = () => {

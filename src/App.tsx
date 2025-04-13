@@ -1,21 +1,19 @@
 import React from 'react';
 import './App.css';
 
-// 导入音效
-import correctSound from './sounds/correct.mp3';
-import wrongSound from './sounds/wrong.mp3';
-
 // 导入组件和逻辑
 import { GameMode } from './types';
-import { useGameState } from './GameState';
-import { useSound } from './SoundManager';
-import { getCorrectAnswer } from './GameLogic';
-import { Menu } from './Menu';
-import { PracticeSettings } from './PracticeSettings';
-import { ExamSettings } from './ExamSettings';
-import { PracticeMode } from './PracticeMode';
-import { ExamMode } from './ExamMode';
-import { ExamResult } from './ExamResult';
+import { useGameState, getCorrectAnswer } from './utils';
+import { generateNewQuestion } from './utils/GameLogic';
+import { useSound } from './hooks';
+import {
+  Menu,
+  PracticeSettings,
+  ExamSettings,
+  PracticeMode,
+  ExamMode,
+  ExamResult
+} from './components';
 
 const App: React.FC = () => {
   const {
@@ -57,7 +55,13 @@ const App: React.FC = () => {
     setExamDifficulty,
     handleQuestionCountChange,
     restartExam,
-    handleNextQuestion
+    handleNextQuestion,
+    // 添加缺失的函数
+    setA,
+    setB,
+    setOperator,
+    setHidden,
+    setShowCelebration
   } = useGameState();
 
   const { playCorrectSound, playWrongSound } = useSound();
@@ -324,24 +328,6 @@ const App: React.FC = () => {
   );
 };
 
-// 由于generateNewQuestion在GameLogic.ts中已定义，这里提供一个临时函数以避免引用错误
-const generateNewQuestion = (difficulty: string, level: number, mode: string) => {
-  // 这是一个占位符函数，实际逻辑已在GameLogic.ts中实现
-  return {
-    a: 1,
-    b: 1,
-    operator: '+',
-    hidden: 0,
-    userAnswer: '',
-    isCorrect: null
-  };
-};
 
-// 由于setA, setB等在GameState.ts中已定义，这里提供临时变量以避免引用错误
-const setA = (value: number) => {};
-const setB = (value: number) => {};
-const setOperator = (value: string) => {};
-const setHidden = (value: number) => {};
-const setShowCelebration = (value: boolean) => {};
 
 export default App;
