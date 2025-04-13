@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 // 导入音效
-import correctSound from '../sounds/correct.mp3';
-import wrongSound from '../sounds/wrong.mp3';
+import correctSound from './sounds/correct.mp3';
+import wrongSound from './sounds/wrong.mp3';
 
 // 游戏模式枚举
 enum GameMode {
