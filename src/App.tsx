@@ -36,6 +36,7 @@ const App: React.FC = () => {
   const [level, setLevel] = useState(1);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [practiceDifficulty, setPracticeDifficulty] = useState<DifficultyLevel>(DifficultyLevel.BEGINNER);
 
   // 当前题目状态
   const [a, setA] = useState(0);
@@ -59,42 +60,44 @@ const App: React.FC = () => {
     // 根据难度和关卡调整数字范围
     let maxA, maxB, minA, minB;
 
-    if (gameMode === GameMode.PRACTICE) {
-      // 练习模式下根据关卡调整难度
-      maxA = Math.min(10 * level, 100);
-      maxB = Math.min(10 * level, 100);
-      minA = Math.max(1, level - 1);
-      minB = Math.max(1, level - 1);
-    } else {
-      // 考试模式下根据选择的难度调整
-      switch (currentDifficulty) {
-        case DifficultyLevel.BEGINNER:
-          // 10以内为主
-          maxA = 10;
-          maxB = 10;
-          minA = 1;
-          minB = 1;
-          break;
-        case DifficultyLevel.INTERMEDIATE:
-          // 10-20混合
-          maxA = 20;
-          maxB = 10;
-          minA = 5;
-          minB = 1;
-          break;
-        case DifficultyLevel.ADVANCED:
-          // 20以内为主
-          maxA = 20;
-          maxB = 20;
-          minA = 10;
-          minB = 5;
-          break;
-        default:
-          maxA = 10;
-          maxB = 10;
-          minA = 1;
-          minB = 1;
-      }
+    // 根据难度级别设置数字范围
+    const difficulty = gameMode === GameMode.PRACTICE ? practiceDifficulty : currentDifficulty;
+
+    switch (difficulty) {
+      case DifficultyLevel.BEGINNER:
+        // 10以内为主
+        maxA = 10;
+        maxB = 10;
+        minA = 1;
+        minB = 1;
+        break;
+      case DifficultyLevel.INTERMEDIATE:
+        // 10-20混合
+        maxA = 20;
+        maxB = 10;
+        minA = 5;
+        minB = 1;
+        break;
+      case DifficultyLevel.ADVANCED:
+        // 20以内为主
+        maxA = 20;
+        maxB = 20;
+        minA = 10;
+        minB = 5;
+        break;
+      default:
+        maxA = 10;
+        maxB = 10;
+        minA = 1;
+        minB = 1;
+    }
+
+    // 如果是练习模式，还要考虑关卡影响
+    if (gameMode === GameMode.PRACTICE && level > 1) {
+      // 关卡越高，数字范围越大
+      const levelFactor = Math.min(level * 0.2, 1.5); // 限制关卡因子最大值
+      maxA = Math.min(Math.floor(maxA * levelFactor), 100);
+      maxB = Math.min(Math.floor(maxB * levelFactor), 100);
     }
 
     // 生成随机数
@@ -413,9 +416,26 @@ const App: React.FC = () => {
     }
   };
 
+  // 开始练习模式设置
+  const handlePracticeButtonClick = () => {
+    setGameMode(GameMode.PRACTICE);
+    // 清空当前题目，这样会显示设置界面
+    setScore(0);
+    setStreak(0);
+    setLevel(0); // 设置为0表示还没有开始练习
+  };
+
   // 开始练习模式
   const startPracticeMode = () => {
-    setGameMode(GameMode.PRACTICE);
+    setLevel(1);
+    setScore(0);
+    setStreak(0);
+    generateNewQuestion();
+  };
+
+  // 设置练习难度
+  const setPracticeDifficultyLevel = (difficulty: DifficultyLevel) => {
+    setPracticeDifficulty(difficulty);
   };
 
   // 开始考试模式
@@ -449,8 +469,46 @@ const App: React.FC = () => {
       <div className="menu-container">
         <h1>小学生算术游戏</h1>
         <div className="menu-buttons">
-          <button className="menu-button" onClick={startPracticeMode}>练习模式</button>
+          <button className="menu-button" onClick={handlePracticeButtonClick}>练习模式</button>
           <button className="menu-button" onClick={handleExamButtonClick}>考试模式</button>
+        </div>
+      </div>
+    );
+  };
+
+  // 练习模式设置界面
+  const renderPracticeSettings = () => {
+    return (
+      <div className="practice-settings">
+        <h1>练习模式设置</h1>
+
+        <div className="setting-group">
+          <h2>选择难度级别</h2>
+          <div className="difficulty-buttons">
+            <button
+              className={`difficulty-button ${practiceDifficulty === DifficultyLevel.BEGINNER ? 'active' : ''}`}
+              onClick={() => setPracticeDifficultyLevel(DifficultyLevel.BEGINNER)}
+            >
+              初级 (10以内)
+            </button>
+            <button
+              className={`difficulty-button ${practiceDifficulty === DifficultyLevel.INTERMEDIATE ? 'active' : ''}`}
+              onClick={() => setPracticeDifficultyLevel(DifficultyLevel.INTERMEDIATE)}
+            >
+              中级 (10-20混合)
+            </button>
+            <button
+              className={`difficulty-button ${practiceDifficulty === DifficultyLevel.ADVANCED ? 'active' : ''}`}
+              onClick={() => setPracticeDifficultyLevel(DifficultyLevel.ADVANCED)}
+            >
+              高级 (20以内)
+            </button>
+          </div>
+        </div>
+
+        <div className="practice-buttons">
+          <button className="back-button" onClick={backToMenu}>返回</button>
+          <button className="start-button" onClick={startPracticeMode}>开始练习</button>
         </div>
       </div>
     );
@@ -722,6 +780,10 @@ const App: React.FC = () => {
       case GameMode.MENU:
         return renderMenu();
       case GameMode.PRACTICE:
+        // 如果关卡为0，表示还没有开始练习，显示设置界面
+        if (level === 0) {
+          return renderPracticeSettings();
+        }
         return renderPracticeMode();
       case GameMode.EXAM:
         // 如果考试题目为空，则显示设置界面

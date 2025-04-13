@@ -345,8 +345,8 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* 考试设置样式 */
-.exam-settings {
+/* 考试和练习设置样式 */
+.exam-settings, .practice-settings {
   max-width: 800px;
   margin: 30px auto;
   padding: 30px;
@@ -355,7 +355,7 @@
   box-shadow: var(--box-shadow);
 }
 
-.exam-settings h1 {
+.exam-settings h1, .practice-settings h1 {
   color: var(--primary-color);
   text-align: center;
   margin-bottom: 30px;
@@ -411,7 +411,7 @@
   margin: 0 auto;
 }
 
-.exam-buttons {
+.exam-buttons, .practice-buttons {
   display: flex;
   justify-content: space-between;
   margin-top: 40px;
