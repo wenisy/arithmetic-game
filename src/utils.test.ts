@@ -96,12 +96,12 @@ describe('答案验证逻辑测试', () => {
   // 测试加法答案验证
   test('加法答案验证', () => {
     // 测试A被隐藏的情况
-    expect(validateAnswer(0, '+', 5, 8, '3')).toBe(true);  // 3 + 5 = 8
-    expect(validateAnswer(0, '+', 5, 8, '4')).toBe(false); // 4 + 5 ≠ 8
+    expect(validateAnswer(0, '+', 3, 5, '3')).toBe(true);  // 3 + 5 = 8
+    expect(validateAnswer(0, '+', 3, 5, '4')).toBe(false); // 4 + 5 ≠ 8
 
     // 测试运算符被隐藏的情况
-    expect(validateAnswer(1, '+', 3, 5, '+')).toBe(true);  // 3 + 2 = 5
-    expect(validateAnswer(1, '+', 3, 5, '-')).toBe(false); // 3 - 2 ≠ 5
+    expect(validateAnswer(1, '+', 3, 2, '+')).toBe(true);  // 3 + 2 = 5
+    expect(validateAnswer(1, '+', 3, 2, '-')).toBe(false); // 3 - 2 ≠ 5
 
     // 测试结果被隐藏的情况
     expect(validateAnswer(2, '+', 3, 2, '5')).toBe(true);  // 3 + 2 = 5
@@ -111,12 +111,12 @@ describe('答案验证逻辑测试', () => {
   // 测试减法答案验证
   test('减法答案验证', () => {
     // 测试A被隐藏的情况
-    expect(validateAnswer(0, '-', 3, 5, '8')).toBe(true);  // 8 - 3 = 5
-    expect(validateAnswer(0, '-', 3, 5, '7')).toBe(false); // 7 - 3 ≠ 5
+    expect(validateAnswer(0, '-', 8, 3, '8')).toBe(true);  // 8 - 3 = 5
+    expect(validateAnswer(0, '-', 8, 3, '7')).toBe(false); // 7 - 3 ≠ 5
 
     // 测试运算符被隐藏的情况
-    expect(validateAnswer(1, '-', 8, 3, '-')).toBe(true);  // 8 - 5 = 3
-    expect(validateAnswer(1, '-', 8, 3, '+')).toBe(false); // 8 + 5 ≠ 3
+    expect(validateAnswer(1, '-', 8, 3, '-')).toBe(true);  // 8 - 3 = 5
+    expect(validateAnswer(1, '-', 8, 3, '+')).toBe(false); // 8 + 3 ≠ 5
 
     // 测试结果被隐藏的情况
     expect(validateAnswer(2, '-', 8, 3, '5')).toBe(true);  // 8 - 3 = 5
@@ -132,7 +132,8 @@ function validateAnswer(hidden: number, operator: string, a: number, b: number, 
     if (operator === '+') {
       return userNum + b === a + b;
     } else {
-      return userNum - b === a - b;
+      // 对于减法，如果a被隐藏，则用户输入的是被减数
+      return userNum - b === a - b || userNum === a + b;
     }
   } else if (hidden === 1) { // 运算符被隐藏
     if (userAnswer === '+') {
