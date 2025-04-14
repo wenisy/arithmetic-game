@@ -28,12 +28,28 @@ export const useSound = () => {
 
   const playCorrectSound = () => {
     correctAudio.currentTime = 0;
-    correctAudio.play().catch(err => console.error('Error playing correct sound:', err));
+    try {
+      const playPromise = correctAudio.play();
+      // 如果 play() 返回 Promise，则添加错误处理
+      if (playPromise !== undefined) {
+        playPromise.catch(err => console.error('Error playing correct sound:', err));
+      }
+    } catch (error) {
+      console.error('Error playing correct sound:', error);
+    }
   };
 
   const playWrongSound = () => {
     wrongAudio.currentTime = 0;
-    wrongAudio.play().catch(err => console.error('Error playing wrong sound:', err));
+    try {
+      const playPromise = wrongAudio.play();
+      // 如果 play() 返回 Promise，则添加错误处理
+      if (playPromise !== undefined) {
+        playPromise.catch(err => console.error('Error playing wrong sound:', err));
+      }
+    } catch (error) {
+      console.error('Error playing wrong sound:', error);
+    }
   };
 
   return { playCorrectSound, playWrongSound };
